@@ -2,7 +2,7 @@
 
 My solutions for competitive programming problems, usually written in Haskell
 
-### TODO
+### TODO: finish unaccepted codes
 #### codeforces
 * 699C,D
 * 698F
