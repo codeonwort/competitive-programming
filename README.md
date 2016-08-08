@@ -1,2 +1,3 @@
 # competitive-programming
-my solutions for competitive programming problems
+
+My solutions for competitive programming problems, usually written in Haskell
