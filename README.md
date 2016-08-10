@@ -4,7 +4,7 @@ My solutions for competitive programming problems, usually written in Haskell
 
 ### TODO: finish unaccepted codes
 #### codeforces
-* 699C,D
+* 699D
 * 698F
 * 701F
 * 702E,F

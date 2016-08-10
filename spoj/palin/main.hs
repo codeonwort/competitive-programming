@@ -2,8 +2,8 @@ import Control.Monad
 import Data.Char
 import Prelude hiding (succ)
 
--- Problem ID:	5
--- URL:			http://www.spoj.com/problems/PALIN/
+-- ID:	5 (PALIN - The Next Palindrome)
+-- URL:	http://www.spoj.com/problems/PALIN/
 
 divide :: String -> (String, String, String)
 divide n
