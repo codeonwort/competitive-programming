@@ -1,4 +1,10 @@
 import Data.List
+import Data.Array
+import Data.Maybe
+import Control.Monad
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Char8 as BS8
+import qualified Data.IntSet as Set
 
 -- ID:	699D (Fix a Tree)
 -- URL:	http://codeforces.com/contest/699/problem/D
@@ -6,26 +12,14 @@ import Data.List
 -- This is not a valid code!
 
 getInt = read `fmap` getLine :: IO Int
-
-data Tree = Cycle [(Int,Int)] Int | NoCycle [(Int,Int)]
+getInts = (map (fst . fromJust . BS8.readInt) . BS8.words) `fmap` BS.getLine :: IO [Int]
 
 main = do
 	n <- getInt
-	ns <- (take n . map read . words) `fmap` getContents :: IO [Int]
-	let forest = sortBy compareTree $ mkForest (zip [1..n] ns)
-	let (cost, fixed) = revise forest
-	print cost
-	print $ elems $ array (1,n) fixed
-
-hasCycle (Cycle _ _) = True
-hasCycle (NoCycle _) = False
-
-compareTree (NoCycle _) (Cycle _ _) = LT
-compareTree (Cycle _ _) (NoCycle _) = GT
-compareTree _ _ = EQ
-
-mkForest ns = 
-
-revise
-compareTree
-mkForest
+	ns <- getInts
+	let vs = zip [1..n] ns
+	let roots@(r0:_) = [v | (v,p) <- vs, v == p]
+	let rootSet = foldl (\set x -> Set.insert x set) Set.empty roots
+	let revised = [if Set.member v rootSet then r0 else p | (v,p) <- vs]
+	print (length roots - 1)
+	putStrLn $ concat (map (\x -> show x ++ " ") revised)
