@@ -9,8 +9,9 @@ import qualified Data.IntSet as Set
 -- ID:	705C (Thor)
 -- URL:	http://codeforces.com/contest/705/problem/C
 
--- This is not an accepted code!
--- Holy s**t TLE on the very final test - test 60 !!!!! I hate Haskell !!!!!!
+type Unread = Map.Map Int Int
+type Notifications = Map.Map Int Int
+type LastRead = Map.Map Int Int
 
 type State = (Map.Map Int (Queue Int), Queue (Int,Int), Int, Int, Map.Map Int Bool)
 	-- (app->noti map, type1-event queue, num unread, current type1-event index, noti->visited map)
