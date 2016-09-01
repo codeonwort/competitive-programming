@@ -19,12 +19,12 @@ solve = do
 mkPair [] = []
 mkPair (x:y:xs) = (x,y) : mkPair xs
 
-count n friends = f [0..n-1] n where
-	f ns 0 = return []
-	f ns n = do
+count n friends = f [0..n-1] where
+	f [] = return []
+	f ns = do
 		let i = head ns
 		j <- (tail ns)
 		let ns' = delete j (tail ns)
 		guard (friends ! (i,j))
-		rest <- f ns' (n-2)
+		rest <- f ns'
 		return $ (i,j):rest
