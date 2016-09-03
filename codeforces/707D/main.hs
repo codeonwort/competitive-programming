@@ -45,6 +45,17 @@ mkTree queries = f tree0 1 queries where
 			invert i tree = Map.adjust ((nodeIx, Invert i):) (nodeIx-1) tree
 			revert k tree = Map.adjust ((nodeIx, Revert):) k tree
 
+{-
+solve2 :: Int -> Int -> Int -> Tree -> Array Int Int
+solve2 n m q tree = array (0,q) (dfs (emptyBookcase n m) 0 0 []) where
+	dfs bookcase ix acc soln
+		| isLeaf = (ix, acc) : soln
+		| otherwise = concat [dfs book' nodeIx acc' soln | (nodeIx, query) <- children, let (book',acc') = apply query (bookcase,acc)] ++ ((ix, acc) : soln)
+		where
+			isLeaf = null (tree Map.! ix)
+			children = tree Map.! ix :: [(Int,Query)]
+-}
+
 solve :: Int -> Int -> Int -> Tree -> Array Int Int
 solve n m q tree = array (0,q) (dfs (emptyBookcase n m) 0 0) where
 	dfs bookcase ix acc

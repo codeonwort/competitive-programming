@@ -9,6 +9,8 @@ import qualified Data.IntSet as Set
 -- ID:	705C (Thor)
 -- URL:	http://codeforces.com/contest/705/problem/C
 
+-- TLE on test 60
+
 type Unread = Map.Map Int Int
 type Notifications = Map.Map Int Int
 type LastRead = Map.Map Int Int
