@@ -22,6 +22,9 @@ My solutions for competitive programming problems, usually written in Haskell an
 #### algospot
 * BOARDCOVER (using Haskell)
 * QUADTREE (using Haskell)
+* FENCE (using Haskell)
+* JUMPGAME (using Haskell)
+* WILDCARD (using Haskell)
 
 #### baekjoon
 * 10456 (Travel Card)
