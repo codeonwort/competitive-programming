@@ -1,9 +1,10 @@
-import Data.List
-
 -- ID:	698F (Coprime Permutation)
 -- URL:	http://codeforces.com/contest/698/problem/F
 
 -- This is not an accepted code!
+-- Reference: http://codeforces.com/blog/entry/46675
+
+import Data.List
 
 coprimes n = map f [1..n] where
 	f i = [j | j <- [1..n], gcd i j == 1]
