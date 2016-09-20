@@ -25,7 +25,6 @@ My solutions for competitive programming problems, usually written in Haskell an
 * BOARDCOVER (using Haskell)
 * QUADTREE (using Haskell)
 * FENCE (using Haskell)
-* JUMPGAME (using Haskell)
 * WILDCARD (using Haskell)
 
 #### baekjoon
