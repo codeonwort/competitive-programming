@@ -8,9 +8,6 @@ My solutions for competitive programming problems, usually written in Haskell an
 * 698B(699D) - Fix a Tree
 * 698F - Coprime Permutation
 * 701F - Break Up
-* 702E - Analysis of Pathes in Functional Graph
-  * Accepted with C++
-  * Not with Haskell (memory limit exceed)
 * 702F - T-Shirts
 * 703C - Chris and Road
 * 703D - Mishka and Interesting Sum
