@@ -13,8 +13,8 @@ LL num[MAX];
 struct SegTree {
 	SegTree *left, *right;
 	int L, R;
-	LL sum, acc;
-	SegTree():acc(0) {}
+	LL sum, lazy;
+	SegTree():lazy(0) {}
 	void build(int l, int r) {
 		L = l; R = r;
 		if(l == r){
@@ -29,27 +29,34 @@ struct SegTree {
 			sum = left->sum + right->sum;
 		}
 	}
+	void updateLazy() {
+		if(lazy != 0){
+			sum += (R-L+1) * lazy;
+			if(left || right){
+				left->lazy += lazy;
+				right->lazy += lazy;
+			}
+			lazy = 0;
+		}
+	}
 	void update(int l, int r, LL delta) {
+		updateLazy();
 		if(r < L || R < l) return;
 		if(l <= L && R <= r){
-			acc += delta;
+			sum += (R-L+1) * delta;
+			if(left || right){
+				left->lazy += delta;
+				right->lazy += delta;
+			}
 		}else{
-			sum += delta * (min(r,R) - max(l,L) + 1);
 			left->update(l, r, delta);
 			right->update(l, r, delta);
-
+			sum = left->sum + right->sum;
 		}
 	}
 	LL query(int l, int r) {
+		updateLazy();
 		if(r < L || R < l) return 0;
-		if(acc != 0){
-			if(left || right){
-				left->acc += acc;
-				right->acc += acc;
-			}
-			sum += acc * (R - L + 1);
-			acc = 0;
-		}
 		if(l <= L && R <= r) return sum;
 		return left->query(l,r) + right->query(l,r);
 	}
