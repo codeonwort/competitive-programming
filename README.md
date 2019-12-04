@@ -1,10 +1,9 @@
-#competitive-programming
+# competitive-programming
 
 My solutions for competitive programming problems, usually written in Haskell and C++.
 
-### TODO: finish unaccepted codes
+TODO: unsolved problems
 #### codeforces
-* 687A - NP-Hard Problem
 * 698B(699D) - Fix a Tree
 * 698F - Coprime Permutation
 * 701F - Break Up
