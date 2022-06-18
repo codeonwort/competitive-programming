@@ -2,6 +2,9 @@
 !*.*
 !*/
 
+# vim temp swap file
+*.swp
+
 dist
 dist-*
 cabal-dev
