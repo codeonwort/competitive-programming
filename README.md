@@ -4,7 +4,6 @@ My solutions for competitive programming problems, usually written in Haskell an
 
 TODO: unsolved problems
 #### codeforces
-* 698B(699D) - Fix a Tree
 * 698F - Coprime Permutation
 * 701F - Break Up
 * 702F - T-Shirts
