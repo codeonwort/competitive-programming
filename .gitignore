@@ -5,6 +5,9 @@
 # vim temp swap file
 *.swp
 
+# executable
+*.exe
+
 dist
 dist-*
 cabal-dev

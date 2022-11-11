@@ -1,14 +1,14 @@
+-- ID:	703C (Chris and Road)
+-- URL:	http://codeforces.com/contest/703/problem/C
+
+-- Implemented the reference solution (https://codeforces.com/blog/entry/46434)
+-- but the math is really dirty.
+
 import Data.Maybe
 import Data.List
 import Control.Monad
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BS8
-import Debug.Trace
-
--- ID:	703C (Chris and Road)
--- URL:	http://codeforces.com/contest/703/problem/C
-
--- This is not an accepted code!
 
 getInt = read `fmap` getLine :: IO Int
 getInts = (map (fst . fromJust . BS8.readInt) . BS8.words) `fmap` BS.getLine :: IO [Int]
@@ -17,86 +17,68 @@ getDouble = read `fmap` getLine :: IO Double
 getDoubles = map fromIntegral `fmap` getInts :: IO [Double]
 
 type Point = (Double, Double)
-type Line = (Point, Point, Int) -- ccw order, index
+type Line = (Point, Point) -- ccw order
 type Poly = [Line]
 
 main = do
+	-- input
 	[n,w',v',u'] <- getInts
 	let [w,v,u] = map fromIntegral [w',v',u'] :: [Double]
 	ps <- replicateM n $ getDoubles >>= \[x,y] -> return (x,y)
-	let poly' = (head (reverse ps),head ps) : zip ps (tail ps)
-	let poly = zipWith (\(p1,p2) i -> (p1,p2,i)) poly' [1..n-1]
-	let walker = ((0,0),(w*(v/u),w), -1)  :: Line
-	case polyHitTime poly walker of
-		Nothing -> print (w/u)
-		Just (time, edge) -> do
-			let posEdges = takeWhile (`slowSlope` walker) $ dropWhile negativeSlope (drop (edgeIdx edge) (poly ++ poly))
-			if posEdges == []
-			then do
-				let (_,(x0,y0),_) = edge
-				let t0 = y0/u + (x0 - v*y0/u)/v
-				let timeStraight = (w - y0) / u
-				print $ t0 + timeStraight
-			else do
-				let ((x0,y0),_,_) = head posEdges
-				let t0 = y0/u + (x0 - v*y0/u)/v
-				let (timeOnEdges, heightOnEdges) = if posEdges == [] then (0,0) else foldl (followEdge v) (0,0) posEdges
-				let timeStraight = (w - heightOnEdges - y0) / u
-				print $ t0 + timeOnEdges + timeStraight
-{-
-			putStrLn $ "polyl:\t\t" ++ show poly
-			putStrLn $ "Edge:\t\t" ++ show edge
-			putStrLn $ "non-negs:\t\t" ++ show (dropWhile negativeSlope (drop (edgeIdx edge) (poly ++ poly)))
-			putStrLn $ "posEdges:\t\t" ++ show posEdges
-			putStrLn $ "t0:\t\t" ++ show t0
-			putStrLn $ "t_edges:\t\t" ++ show timeOnEdges
-			putStrLn $ "t_strai:\t\t" ++ show  timeStraight
--}
+	let bus = (head (reverse ps),head ps) : zip ps (tail ps)
+	let walker = ((0,0),(2*w*(v/u),2*w))  :: Line
+	-- solve
+	let lb = 0.0
+	let ub = fst $ maximumBy (\p q -> compare (fst p) (fst q)) ps -- not optimal but conservative
+	let offX = binSearch lb ub bus walker
+	if busHitTest bus walker
+	then print $ (offX/v) + (w/u)
+	else print $ (w/u)
 
-bottom :: Line -> Double
-bottom ((_,y1),(_,y2),_) = min y1 y2
+-------------------------------------------------------------------------
 
-followEdge v (t,h) edge@((x1,y1),(x2,y2),_) = (t',h') where
-	t' = t + dx/v
-	h' = h + dy
-	(slope,_) = slopeForm edge
-	dx = x2 - x1
-	dy = y2 - y1
+binSearch :: Double -> Double -> Poly -> Line -> Double
+binSearch lb ub bus walker =
+	if (ub - lb) <= (0.5 * 1e-6)
+	then lb
+	else if busHitTest bus (shiftWalker walker mid)
+		then binSearch mid ub bus walker
+		else binSearch lb mid bus walker
+			where mid = 0.5 * (lb + ub)
 
-edgeIdx (_,_,ix) = ix
+shiftWalker :: Line -> Double -> Line
+shiftWalker ((x0,y0),(x1,y1)) offsetX = ((x0+offsetX,y0),(x1+offsetX,y1))
 
+busHitTest :: Poly -> Line -> Bool
+busHitTest edges walker = not (hits == [])
+	where hits = filter (`lineHitTest` walker) edges
+
+-- TODO: 
+lineHitTest :: Line -> Line -> Bool
+lineHitTest edge walker = intersects && notOnVertices && (m1 /= m2) where
+	(m1,c1) = slopeForm edge
+	(m2,c2) = slopeForm walker
+	tx = if m2 == m1
+		then (if c1 == c2 then (fst (midPoint walker)) else ((fst .fst) (shiftWalker walker (-100.0))))
+		else (c1-c2)/(m2-m1)
+	ty = m1 * tx + c1
+	tp = (tx, ty)
+	intersects = (contains walker tx ty) && (contains edge tx ty)
+	notOnVertices = (notOnVertex edge tp) && (notOnVertex walker tp)
+	notOnVertex ((x0,y0),(x1,y1)) (tx,ty) = not ((x0 == tx && y0 == ty) || (x1 == tx && y1 == ty))
+
+midPoint ((x0,y0),(x1,y1)) = (0.5*(x0+x1),0.5*(y0+y1))
+
+contains :: Line -> Double -> Double -> Bool
+contains ((x1,y1),(x2,y2)) tx ty = minX <= tx && tx <= maxX && minY <= ty && ty <= maxY where
+	minX = min x1 x2
+	maxX = max x1 x2
+	minY = min y1 y2
+	maxY = max y1 y2
+
+-- y = slope * x + offset
 slopeForm :: Line -> (Double, Double) -- (slope, y-offset)
-slopeForm ((x1,y1),(x2,y2),_) = (slope, offset) where
+slopeForm ((x1,y1),(x2,y2)) = (slope, offset) where
 	slope = (y2-y1) / (x2-x1)
 	offset = -slope * x1 + y1
 
-polyHitTime :: Poly -> Line -> Maybe (Double, Line)
-polyHitTime edges walker
-	| times == [] = Nothing
-	| otherwise = Just $ minimumBy (\p q -> compare (fst p) (fst q)) times
-	where times = map fromJust $ filter isJust (map (`lineHitTime` walker) edges)
-
-lineHitTime :: Line -> Line -> Maybe (Double, Line)
-lineHitTime edge walker = if contains walker tx && contains edge tx then Just (tx, edge) else Nothing where
-	(m1,c1) = slopeForm edge
-	(m2,c2) = slopeForm walker
-	tx = (c1-c2)/(m2-m1)
-
-contains :: Line -> Double -> Bool
-contains ((x1,y1),(x2,y2),_) x = x1 <= x && x <= x2
-
-insideLine :: Line -> Point -> Bool
-insideLine ((x1,y1),(x2,y2),_) (x,y) = dx1*dy2 - dy1*dx2 < 0 where
-	(dx1, dy1) = (x-x1, y-y1)
-	(dx2, dy2) = (x2-x1, y2-y1)
-
-slowSlope :: Line -> Line -> Bool
-slowSlope edge walker = (not $ negativeSlope edge) && sEdge <= sWalker where
-	(sEdge,_) = slopeForm edge
-	(sWalker,_) = slopeForm walker
-
-negativeSlope :: Line -> Bool
-negativeSlope ((x1,y1),(x2,y2),_) = x2 /= x1 && (y2-y1)/(x2-x1) < 0
-
-insidePoly :: Poly -> Point -> Bool
-insidePoly poly pt = all (`insideLine` pt) poly

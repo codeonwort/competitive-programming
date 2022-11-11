@@ -7,7 +7,6 @@ TODO: unsolved problems
 * 698F - Coprime Permutation
 * 701F - Break Up
 * 702F - T-Shirts
-* 703C - Chris and Road
 * 703D - Mishka and Interesting Sum
 * 704A(705C) - Thor
 * 704B(705D) - Ant Man
